@@ -35,8 +35,13 @@ public class UserService {
 
     public ResponseEntity<User> addUser(User user) {
         try {
-            User _user = userRepository.save(new User(user.getLogin(), user.getPassword(), user.getEmail()));
-            return new ResponseEntity<>(_user, HttpStatus.CREATED);
+            User checkUser = userRepository.findByLogin(user.getLogin());
+            if (checkUser == null) {
+                User _user = userRepository.save(new User(user.getLogin(), user.getPassword(), user.getEmail()));
+                return new ResponseEntity<>(_user, HttpStatus.CREATED);
+            } else {
+                return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
+            }
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
