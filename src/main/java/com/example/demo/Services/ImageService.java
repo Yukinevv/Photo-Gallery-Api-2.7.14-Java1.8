@@ -99,7 +99,7 @@ public class ImageService {
             byte[] data = readAllBytes(resource.getInputStream());
 
             Image image = new Image(gridFsFile.getFilename(), data, (String) gridFsFile.getMetadata().get("login"), (String) gridFsFile.getMetadata().get("category"));
-            image.setId(id);
+            image.setId(gridFsFile.getObjectId().toString());
 
             return Optional.of(image);
         }
@@ -111,7 +111,9 @@ public class ImageService {
         try {
             GridFsResource resource = operations.getResource(file);
             byte[] data = readAllBytes(resource.getInputStream());
-            return new Image(file.getFilename(), data, (String) file.getMetadata().get("login"), (String) file.getMetadata().get("category"));
+            Image image = new Image(file.getFilename(), data, (String) file.getMetadata().get("login"), (String) file.getMetadata().get("category"));
+            image.setId(file.getObjectId().toString());
+            return image;
         } catch (IOException e) {
             LOGGER.severe("Error converting GridFSFile to Image: " + e.getMessage());
             return null;
